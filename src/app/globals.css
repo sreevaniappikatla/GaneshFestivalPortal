@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Festival design tokens (see tailwind.config.ts for the full palette):
+  - cream   #FBF3E4  base background, page canvas
+  - saffron #EF7E1B  primary accent, links, CTAs
+  - gold    #C79A3D  borders, dividers, decorative rules
+  - maroon  #7A1230  deep accent, hero gradient, headings on light bg
+  - ink     #3B2412  body text
+
+  Display type: Baloo 2 (rounded, warm — used for headings and the
+  countdown numerals only). Body type: Inter.
+*/
+
+:root {
+  --background: #fbf3e4;
+  --foreground: #3b2412;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Visible keyboard focus everywhere, on top of Tailwind's own utilities. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #c79a3d;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
