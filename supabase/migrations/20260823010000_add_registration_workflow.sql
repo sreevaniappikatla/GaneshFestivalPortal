@@ -1,10 +1,46 @@
-alter table public.pooja_registrations
-  add column festival_id uuid references public.festivals(id) on delete restrict,
-  add column amount numeric(10, 2) not null default 0,
-  add column payment_status text not null default 'not_required';
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'pooja_registrations'
+      and column_name = 'festival_id'
+  ) then
+    alter table public.pooja_registrations
+      add column festival_id uuid references public.festivals(id) on delete restrict;
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'pooja_registrations'
+      and column_name = 'amount'
+  ) then
+    alter table public.pooja_registrations
+      add column amount numeric(10, 2) not null default 0;
+  end if;
+
+  if not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'pooja_registrations'
+      and column_name = 'payment_status'
+  ) then
+    alter table public.pooja_registrations
+      add column payment_status text not null default 'not_required';
+  end if;
+end $$;
 
 alter table public.poojas
-  add column amount numeric(10, 2) not null default 0,
+  add column if not exists amount numeric(10, 2) not null default 0;
+
+alter table public.poojas
+  drop constraint if exists poojas_amount_valid;
+
+alter table public.poojas
   add constraint poojas_amount_valid check (amount >= 0);
 
 update public.pooja_registrations as registrations
@@ -14,16 +50,31 @@ where poojas.id = registrations.pooja_id
   and registrations.festival_id is null;
 
 alter table public.pooja_registrations
-  alter column festival_id set not null,
-  add constraint pooja_registrations_amount_valid check (amount >= 0),
+  alter column festival_id set not null;
+
+alter table public.pooja_registrations
+  drop constraint if exists pooja_registrations_amount_valid;
+alter table public.pooja_registrations
+  add constraint pooja_registrations_amount_valid check (amount >= 0);
+
+alter table public.pooja_registrations
+  drop constraint if exists pooja_registrations_payment_status_valid;
+alter table public.pooja_registrations
   add constraint pooja_registrations_payment_status_valid check (
     payment_status in ('not_required', 'pending', 'paid', 'failed')
   );
 
-create index pooja_registrations_festival_id_idx
+alter table public.pooja_registrations
+  alter column email drop not null;
+
+create index if not exists pooja_registrations_festival_id_idx
   on public.pooja_registrations (festival_id);
 
-create or replace function public.create_pooja_registration(
+drop function if exists public.create_pooja_registration(
+  uuid, uuid, uuid, text, text, text, text, date, integer, text, text, text
+) cascade;
+
+create function public.create_pooja_registration(
   p_festival_id uuid,
   p_pooja_id uuid,
   p_pooja_slot_id uuid,
@@ -102,7 +153,6 @@ begin
     raise exception using errcode = 'P0001', message = 'INACTIVE_OR_INVALID_POOJA';
   end if;
 
-  -- Lock this slot before counting so concurrent submissions serialize here.
   select * into v_slot
   from public.pooja_slots
   where pooja_slots.id = p_pooja_slot_id
@@ -115,9 +165,9 @@ begin
   end if;
 
   select count(*) into v_registration_count
-  from public.pooja_registrations
-  where pooja_slot_id = p_pooja_slot_id
-    and status <> 'cancelled';
+  from public.pooja_registrations as pr
+  where pr.pooja_slot_id = p_pooja_slot_id
+    and pr.status <> 'cancelled';
 
   if v_slot.capacity is not null and v_registration_count >= v_slot.capacity then
     raise exception using errcode = 'P0001', message = 'SLOT_FULL';
@@ -128,11 +178,11 @@ begin
     0
   ));
 
-  select coalesce(max(regexp_replace(registration_number, '^.*-([0-9]+)$', '\1')::integer), 0) + 1
+  select coalesce(max(cast(regexp_replace(pr.registration_number, '^.*-([0-9]+)$', '\1') as integer)), 0) + 1
     into v_sequence
-  from public.pooja_registrations
-  where festival_id = p_festival_id
-    and registration_number is not null;
+  from public.pooja_registrations as pr
+  where pr.festival_id = p_festival_id
+    and pr.registration_number is not null;
 
   v_registration_number := format(
     '%s-%s-%s',

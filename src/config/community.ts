@@ -9,7 +9,7 @@ export const communityConfig: CommunityConfig = {
   location: "Hyderabad",
   logo: "/logo.png",
   contactPhone: "+91 90000 00000",
-  contactEmail: "committee@srisairesidency.example",
+  contactEmail: "committee@mayfairvisista.example",
   whatsappNumber: "+91 90000 00001",
   timezone: "Asia/Kolkata",
   currency: "INR",

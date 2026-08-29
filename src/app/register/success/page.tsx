@@ -6,12 +6,20 @@ import { useSearchParams } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 import type { RegistrationConfirmation } from "@/services/registration.client";
 
-function Row({ label, value, emphasize }: { label: string; value: string; emphasize?: boolean }) {
+function displayText(value: string | number | null | undefined): string {
+  if (value === null || value === undefined) return "Not mentioned";
+  if (typeof value === "string") return value.trim() ? value : "Not mentioned";
+  return String(value);
+}
+
+function Row({ label, value, emphasize }: { label: string; value: string | number | null | undefined; emphasize?: boolean }) {
+  const text = displayText(value);
+
   return (
     <div className="flex items-center justify-between gap-4 border-b border-gold-200/60 pb-2 last:border-0 last:pb-0">
       <dt className="text-ink/60">{label}</dt>
       <dd className={emphasize ? "font-display text-base font-bold text-maroon-500" : "font-medium text-ink"}>
-        {value}
+        {text}
       </dd>
     </div>
   );
@@ -66,10 +74,10 @@ function SuccessContent() {
       <div className="mt-8 rounded-2xl border border-gold-300/60 bg-cream-50 p-6 text-left shadow-card">
         <dl className="space-y-3 text-sm">
           <Row label="Registration Number" value={registration.id} emphasize />
-          <Row label="Pooja" value={registration.poojaName ?? registration.poojaId} />
-          <Row label="Date" value={formatDate(registration.poojaDate)} />
-          <Row label="Time" value={`${registration.slotStartTime.slice(0, 5)}–${registration.slotEndTime.slice(0, 5)}`} />
-          <Row label="Unit" value={registration.unitNumber} />
+          <Row label="Pooja" value={displayText(registration.poojaName ?? registration.poojaId)} />
+          <Row label="Date" value={displayText(formatDate(registration.poojaDate))} />
+          <Row label="Time" value={displayText(registration.slotStartTime ? `${registration.slotStartTime.slice(0, 5)}–${registration.slotEndTime.slice(0, 5)}` : undefined)} />
+          <Row label="Unit" value={displayText(registration.unitNumber)} />
           <Row label="Family Members" value={String(registration.familyMembersCount)} />
           {registration.amount > 0 && <Row label="Amount" value={`INR ${registration.amount.toLocaleString("en-IN")}`} />}
         </dl>

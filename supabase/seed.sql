@@ -25,8 +25,8 @@ begin
     currency
   ) values (
     '00000000-0000-4000-8000-000000000001',
-    'Sri Sai Residency',
-    'SSR',
+    'Mayfair Visista',
+    'MV',
     'Hyderabad',
     '+91 9999999999',
     'ganeshcommittee@example.com',
@@ -37,8 +37,8 @@ begin
 
   select c.id into v_community_id
   from public.communities as c
-  where name = 'Sri Sai Residency'
-    and short_name = 'SSR'
+  where name = 'Mayfair Visista'
+    and short_name = 'MV'
   order by created_at
   limit 1;
 
@@ -63,7 +63,7 @@ begin
     '2026-09-03',
     'Ganesh Chaturthi Celebrations 2026',
     'Ganapati Bappa Morya',
-    'SSR'
+    'MV'
   )
   on conflict (community_id, year) do nothing;
 
@@ -178,7 +178,7 @@ begin
       v_community_id,
       v_festival_id,
       'Welcome to Ganesh Chaturthi Celebrations 2026',
-      'Sri Sai Residency warmly welcomes every family to join the celebrations from 25 August to 3 September 2026.',
+      'Mayfair Visista warmly welcomes every family to join the celebrations from 25 August to 3 September 2026.',
       '2026-08-15 09:00:00+05:30',
       true
     ),

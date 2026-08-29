@@ -423,7 +423,7 @@ export default function AdminRegistrationManager({
                   Email
                 </p>
                 <p className="mt-1 text-base font-medium text-slate-800">
-                  {selectedRegistration.email || "—"}
+                  {selectedRegistration.email || "Not mentioned"}
                 </p>
               </div>
               <div>
@@ -487,7 +487,7 @@ export default function AdminRegistrationManager({
                   Gotram
                 </p>
                 <p className="mt-1 text-base font-medium text-slate-800">
-                  {selectedRegistration.gotram || "—"}
+                  {selectedRegistration.gotram || "Not mentioned"}
                 </p>
               </div>
               <div className="md:col-span-2">
@@ -495,7 +495,7 @@ export default function AdminRegistrationManager({
                   Family names
                 </p>
                 <p className="mt-1 text-base font-medium text-slate-800">
-                  {selectedRegistration.familyNames || "—"}
+                  {selectedRegistration.familyNames || "Not mentioned"}
                 </p>
               </div>
               <div className="md:col-span-2">
@@ -503,7 +503,7 @@ export default function AdminRegistrationManager({
                   Notes
                 </p>
                 <p className="mt-1 text-base font-medium text-slate-800">
-                  {selectedRegistration.notes || "—"}
+                  {selectedRegistration.notes || "Not mentioned"}
                 </p>
               </div>
             </div>

@@ -19,6 +19,9 @@ const requestSchema = z.object({
 
 function friendlyError(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
+  if (message.includes("Could not find the function public.create_pooja_registration")) {
+    return "The registration backend is not configured in Supabase. Please run the latest Supabase migration for the registration workflow.";
+  }
   if (message.includes("SLOT_FULL")) return "Sorry, that slot just became full. Please choose another slot.";
   if (message.includes("INACTIVE_OR_INVALID_POOJA")) return "That pooja is no longer available. Please choose another pooja.";
   if (message.includes("INVALID_OR_INACTIVE_SLOT")) return "That slot is no longer available. Please choose another slot.";

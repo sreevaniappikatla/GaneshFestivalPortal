@@ -7,7 +7,13 @@ export function createRegistrationSchema(startDate: string, endDate: string) {
     .string()
     .trim()
     .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit phone number"),
-  email: z.string().trim().min(1, "Enter your email address").email("Enter a valid email address"),
+  email: z
+    .union([
+      z.string().trim().email("Enter a valid email address"),
+      z.literal(""),
+    ])
+    .optional()
+    .default(""),
   poojaId: z.string().min(1, "Select a pooja"),
   poojaSlotId: z.string().uuid("Select a valid pooja slot"),
   poojaDate: z

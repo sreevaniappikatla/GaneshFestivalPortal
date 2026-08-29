@@ -35,7 +35,7 @@ export function saveRegistration(registration: Registration): void {
 }
 
 /**
- * Generates the next registration number, e.g. "GCF-2026-0001", based on
+ * Generates the next registration number, e.g. "MV-2026-0001", based on
  * how many registrations already exist in local storage.
  */
 export function generateRegistrationNumber(festival: FestivalConfig): string {

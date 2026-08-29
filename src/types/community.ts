@@ -1,7 +1,7 @@
 // Types describing the residential community running the festival.
 
 export interface CommunityConfig {
-  /** Full display name, e.g. "Sri Sai Residency" */
+  /** Full display name, e.g. "Mayfair Visista" */
   name: string;
   /** Short name/initials used in compact UI spots, e.g. nav badges */
   shortName: string;

@@ -11,10 +11,15 @@ export type RegistrationConfirmation = Registration & {
 export async function submitRegistration(
   payload: Record<string, unknown>,
 ): Promise<RegistrationConfirmation> {
+  const normalizedPayload = {
+    ...payload,
+    familyMembersCount: Number(payload.familyMembersCount ?? 1),
+  };
+
   const response = await fetch("/api/registrations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(normalizedPayload),
   });
   const result = (await response.json()) as { registration?: RegistrationConfirmation; error?: string };
 

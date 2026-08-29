@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,9 +25,13 @@ export default function RegistrationForm({
 }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const availableSlots = slots.filter((slot) => slot.capacity === null || slot.registeredCount < slot.capacity);
-  const activePoojas = poojas.filter(
-    (pooja) => pooja.active && availableSlots.some((slot) => slot.poojaId === pooja.id),
+  const availableSlots = useMemo(
+    () => slots.filter((slot) => slot.capacity === null || slot.registeredCount < slot.capacity),
+    [slots],
+  );
+  const activePoojas = useMemo(
+    () => poojas.filter((pooja) => pooja.active && availableSlots.some((slot) => slot.poojaId === pooja.id)),
+    [poojas, availableSlots],
   );
   const registrationSchema = createRegistrationSchema(festival.startDate, festival.endDate);
 
@@ -56,11 +60,15 @@ export default function RegistrationForm({
 
   const selectedPoojaId = watch("poojaId");
   const selectedSlotId = watch("poojaSlotId");
-  const selectedSlots = availableSlots.filter((slot) => slot.poojaId === selectedPoojaId);
+  const selectedSlots = useMemo(
+    () => availableSlots.filter((slot) => slot.poojaId === selectedPoojaId),
+    [availableSlots, selectedPoojaId],
+  );
 
   useEffect(() => {
     const selectedSlot = availableSlots.find((slot) => slot.id === selectedSlotId);
-    if (selectedSlot) setValue("poojaDate", selectedSlot.date, { shouldValidate: true });
+    if (!selectedSlot) return;
+    setValue("poojaDate", selectedSlot.date, { shouldValidate: true });
   }, [availableSlots, selectedSlotId, setValue]);
 
   const onSubmit = async (values: RegistrationFormValues) => {
@@ -174,7 +182,7 @@ export default function RegistrationForm({
             min={1}
             max={20}
             className={inputClass(!!errors.familyMembersCount)}
-            {...register("familyMembersCount")}
+            {...register("familyMembersCount", { valueAsNumber: true })}
           />
         </FormField>
 

@@ -11,5 +11,5 @@ export const festivalConfig: FestivalConfig = {
   endDate: "2026-09-23",
   heroTitle: "Ganesh Festival Community Portal",
   heroSubtitle: "Ganapati Bappa Morya",
-  registrationPrefix: "GCF",
+  registrationPrefix: "MV",
 };
